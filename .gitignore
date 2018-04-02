@@ -1,6 +1,6 @@
 # repo specific gitignore
-*.in  # input file
-*.out  # output file
+*.in
+*.out
 
 ###### C++
 
