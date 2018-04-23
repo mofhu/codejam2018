@@ -1,6 +1,7 @@
 # repo specific gitignore
 *.in
 *.out
+.DS_Store
 
 ###### C++
 
