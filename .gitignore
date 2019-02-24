@@ -2,6 +2,12 @@
 *.in
 *.out
 
+###### Mac OS
+*.DS_Store
+
+###### codejam tester
+testing_tool.py
+
 ###### C++
 
 # Prerequisites
