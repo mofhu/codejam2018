@@ -7,7 +7,7 @@ x = 3*4*5*7*11*13*17
 
 from time import sleep
 sleep(0.05)
-for case in range(n):
+for case in range(t):
 
     sleep(0.05)
     hanxin = {}
@@ -40,5 +40,4 @@ for case in range(n):
 
     sleep(0.5)
     continue
-
 
