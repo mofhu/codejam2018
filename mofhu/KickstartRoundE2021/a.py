@@ -1,5 +1,7 @@
 # author: mofhu@github
 # only for test set 1 and 2
+# note after AC: should be able to notice that this is a sorting problem.
+# see google's analysis for details.
 
 ncase = int(input())
 
