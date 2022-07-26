@@ -1,6 +1,9 @@
 # repo specific gitignore
 *.in
 *.out
+*.txt
+interactive_runner.*
+local_testing_tool.*
 .DS_Store
 
 ###### Mac OS
