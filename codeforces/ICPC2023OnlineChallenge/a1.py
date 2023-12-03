@@ -40,11 +40,12 @@ for i in range(J):
 
 # output
 # k_limit = [[0 for n in range(N)]] * R * T  # not implemented in MVP
-p_limit = [min(R-0.0000001, 4-0.0000001) for i in range(T)]  # temp use 4 as max power
+p_limit = [min(R, 4) for i in range(T)]  # temp use 4 as max power
 # p_limit = [R for i in range(T)]
 output = []
 for i in range(R*K*T):
     output.append([0 for i in range(N)][:])
+# print(output)
 if debug:
     print(p_limit)
 frames.sort(key=lambda x: x[1]/x[4])
@@ -52,18 +53,15 @@ frames.sort(key=lambda x: x[1]/x[4])
 
 for f in frames:
     if debug:
-        print('before frame #{f[0]}')
-        print(output)
-        print(f'frame #{f[0]}', p_limit)
+        print(f[0], p_limit)
     tbs, user, t0 = f[1], f[2], f[3]
-    best_k = {}
     for t in range(t0, t0+f[4]):
         # check if p_limit[t] is still available
-        if p_limit[t] < min(R-0.0000001, 4-0.0000001):
-            # print(f'used power here for frame #{f[0]}')
+        if p_limit[t] <= 0:
             continue
+    best_k = {}
     # best_p = {}
-    # for t in range(t0, t0+f[4]):
+    for t in range(t0, t0+f[4]):
         # find best cell (k) for this frame (t)
         if debug:
             print(f'tbs={tbs}, t={t}')
@@ -80,25 +78,17 @@ for f in frames:
             if debug:
                 print(f't={t}, best_k is {best_k[t]}, best_sinr is {best_sinr}')
                 print(f'bestk {best_k}')
-            best_p = min(p_limit[t], 4-0.0000001)
+            best_p = min(p_limit[t], 4)
             if best_p > 0:
                 p_limit[t] -= best_p
                 # print(f'frame{f[0]}, user{f[2]}, best_sinr {best_sinr}, best_p: {best_p[t]}')  # debug
                 # ignore the calculation of transferred bits in MVP
             gt = 192 * log2(1 + best_sinr*best_p)
-            if tbs >= gt:
-                tbs -= gt
-            else:
-                # calculate true best_p lower than current
-                real_p = (2**(tbs / 192) -1) / best_sinr * 1.0001 + 0.00001  # 1.00001 to avoid precision error
-                if real_p < best_p:
-                    p_limit[t] += best_p - real_p
-                    best_p = real_p
-                tbs = 0
+            tbs -= gt
             # set best_k to output
             if t in best_k:
                 k = best_k[t]
-                output[r + k*R + t*K*R -1][user] = round(best_p-0.00001, 6)
+                output[r + k*R + t*K*R -1][user] = best_p
 if debug:
     print(p_limit)
 # print(output)  # debug
