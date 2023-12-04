@@ -41,7 +41,7 @@ for i in range(J):
 # k_limit = [[0 for n in range(N)]] * R * T  # not implemented in MVP
 gp_limit = [R for i in range(T)]  # global power limit
 p_limit = [min(R, 4) for i in range(T)]  # temp use 4 as max power
-b_limit = [0 for i in range(T)]  # bool limit for r*k
+b_limit = [-1 for i in range(T)]  # bool limit for r*k, will be set to user id if used 
 
 output = []
 for i in range(R*K*T):
@@ -64,15 +64,27 @@ for f in frames:
     flag_transfer = False  # if can be transferred
     for t in range(t0, t0+f[4]):
         # check if p_limit[t] is still available
-        if p_limit[t] - min(R, 4) > MIN_THRESHOD or gp_limit[t] - R > MIN_THRESHOD or b_limit[t]:
+        if p_limit[t] - min(R, 4) > MIN_THRESHOD or gp_limit[t] - R > MIN_THRESHOD: # or b_limit[t]:
             if debug:
                 print(f'used power here for frame #{f[0]} at t={t}')
             # no way to use more power here
             continue
+        if b_limit[t] != -1:
+            user_m = b_limit[t]
+            dmrn = d[user_m + r*N + k*R*N][user]
+            # print(f'dmrn ={dmrn}, user_m={user_m}, r={r}, k={k}')
+            if dmrn < 0:
+                continue
         # find best cell (k) for this frame (t)
         if debug:
             print(f'tbs={tbs}, t={t}')
-        if p_limit[t] > MIN_THRESHOD and gp_limit[t] > MIN_THRESHOD and not b_limit[t]:  # can transfer
+        if p_limit[t] > MIN_THRESHOD and gp_limit[t] > MIN_THRESHOD:
+            if b_limit[t] != -1:  # can transfer            
+                user_m = b_limit[t]
+                dmrn = d[user_m + r*N + k*R*N][user]
+                print(f'dmrn ={dmrn}, user_m={user_m}, r={r}, k={k}')
+                if dmrn < 0:
+                    continue
             all_t_kp[t] = []
             for r in range(R):
                 # r*k search not implemented in MVP;
@@ -171,7 +183,7 @@ for f in frames:
                 if p1 == 3.99999999: p1 = 4
                 # p_limit[t] -= p1
                 # gp_limit[t] -= p1
-                b_limit[t] = 1
+                b_limit[t] = user
                 output[r + k*R + t*K*R -1][user] = p1
             continue
 if debug:
